@@ -25,9 +25,9 @@
 
 "" Auto install
 if empty(glob('~/.vim/autoload/plug.vim'))
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+        \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | :so $MYVIMRC | :q
 endif
 
 "" Set plugin directory
@@ -65,9 +65,6 @@ set autoread
 
 "" Set the mapleader. If "mapleader" is not set or empty, a backslash is used instead.
 let mapleader = ","
-
-"" sudo save (useful when you forget to open a file with sudo)
-command W w !sudo tee % > /dev/null
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -136,7 +133,7 @@ cnoremap <F5> <C-c>:set list!<CR>
 """"""""""""""""""""""
 
 "" Set color scheme
-colorscheme dracula
+silent! colorscheme dracula
 
 "" Set vim-airline theme
 let g:airline_theme='badwolf'
