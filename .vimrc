@@ -48,6 +48,12 @@ Plug 'vim-airline/vim-airline-themes'
 "" vim-evanesco (nicer search)
 Plug 'pgdouyon/vim-evanesco'
 
+"" vim-surround (easily delete, change, and add surroundings in pairs)
+Plug 'tpope/vim-surround'
+
+"" vim-repeat (improved . command)
+Plug 'tpope/vim-repeat'
+
 "" Initialize plugin system
 call plug#end()
 
