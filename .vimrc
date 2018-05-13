@@ -54,6 +54,9 @@ Plug 'tpope/vim-surround'
 "" vim-repeat (improved . command)
 Plug 'tpope/vim-repeat'
 
+"" vim-commentary (Comment stuff out...)
+Plug 'tpope/vim-commentary'
+
 "" Initialize plugin system
 call plug#end()
 
