@@ -60,6 +60,9 @@ Plug 'tpope/vim-commentary'
 "" nerdtree (tree explorer)
 Plug 'scrooloose/nerdtree'
 
+"" vimtex (modern latex plugin)
+Plug 'lervag/vimtex'
+
 "" Initialize plugin system
 call plug#end()
 
@@ -108,12 +111,6 @@ set ignorecase
 "" Set match upper case if upper else match lower and upper
 set smartcase
 
-"" Highlight search results
-"set hlsearch
-
-"" <Ctrl-l> redraws the screen and removes any search highlighting.
-nnoremap <silent> <C-l> :nohl<CR><C-l>
-
 "" Don't redraw while running macros
 set lazyredraw
 
@@ -128,7 +125,7 @@ set mat=2
 set foldcolumn=1
 
 "" Toggle line numbers
-nmap <C-N><C-N> :set invnumber<CR>
+nmap <C-l><C-l> :set invnumber<CR>
 
 "" Add space to listchars
 set listchars+=space:•
@@ -218,6 +215,9 @@ map <C-Y> ggvG$:call yapf#YAPF()<cr>
 
 "" yapf auto format current buffer
 map <C-B> :call yapf#YAPF()<cr>
+
+"" Toggle for NerdTree
+map <C-N> :NERDTreeToggle<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
