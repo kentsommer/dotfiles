@@ -57,6 +57,9 @@ Plug 'tpope/vim-repeat'
 "" vim-commentary (Comment stuff out...)
 Plug 'tpope/vim-commentary'
 
+"" nerdtree (tree explorer)
+Plug 'scrooloose/nerdtree'
+
 "" Initialize plugin system
 call plug#end()
 
