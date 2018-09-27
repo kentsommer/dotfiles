@@ -63,6 +63,10 @@ Plug 'scrooloose/nerdtree'
 "" vimtex (modern latex plugin)
 Plug 'lervag/vimtex'
 
+"" fzf (fuzzy finder)
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+
 "" Initialize plugin system
 call plug#end()
 
