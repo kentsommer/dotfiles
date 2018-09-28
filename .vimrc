@@ -5,6 +5,7 @@
 """"""""""""""""""""""""""""""
 "" Contents:                ""
 ""   - vim-plug             ""
+""   - ycmd                 ""
 ""   - General              ""
 ""   - User interface       ""
 ""   - Colors and fonts     ""
@@ -72,6 +73,48 @@ Plug 'Valloric/YouCompleteMe', {'do': './install.py --all' }
 
 "" Initialize plugin system
 call plug#end()
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""
+"" ycmd ""
+""""""""""
+
+"" Where to look for the ycm_exta_conf file (usually project specific)
+let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+
+"" Show preview window when completing
+let g:ycm_add_preview_to_completeopt = 1
+
+"" Do not autoclose the preview window after completion
+let g:ycm_autoclose_preview_window_after_completion = 0
+
+"" Autoclose the preview window after insertion
+let g:ycm_autoclose_preview_window_after_insertion = 1
+
+"" Do not ask for confirmation when loading the ycm_extra_conf file
+let g:ycm_confirm_extra_conf = 0
+
+"" Allow ycmd to look in comments and strings for completions
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
+
+"" Use the utlisnips completer
+let g:ycm_use_ultisnips_completer = 1
+
+"" Completion for programming language's keyword
+let g:ycm_seed_identifiers_with_syntax = 1
+
+"" Completion in comments
+let g:ycm_complete_in_comments = 1
+
+"" Completion in string
+let g:ycm_complete_in_strings = 1
+
+"" make it so location list is populated for :lnext and :lprevious
+let g:ycm_always_populate_location_list = 1
+
+"" Mapping for best effort GoTo (will not work outside a translation unit)
+nnoremap <C-g> :YcmCompleter GoTo<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
