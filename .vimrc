@@ -67,6 +67,9 @@ Plug 'lervag/vimtex'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
+"" YouCompleteMe (code completion)
+Plug 'Valloric/YouCompleteMe', {'do': './install.py --all' }
+
 "" Initialize plugin system
 call plug#end()
 
