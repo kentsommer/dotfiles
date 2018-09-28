@@ -33,8 +33,8 @@ endif
 "" Set plugin directory
 call plug#begin('~/.vim/plugged')
 
-"" Dracula (color theme)
-Plug 'dracula/vim', { 'as': 'dracula' }
+"" vim-solarized8 (color theme)
+Plug 'lifepillar/vim-solarized8'
 
 "" yapf (Google's Python Code formatter)
 Plug 'google/yapf', { 'rtp': 'plugins/vim', 'for': 'python' }
@@ -146,7 +146,9 @@ cnoremap <F5> <C-c>:set list!<CR>
 """"""""""""""""""""""
 
 "" Set color scheme
-silent! colorscheme dracula
+let g:solarized_use16 = 1
+set background=dark
+silent! colorscheme solarized8
 
 "" Set vim-airline theme
 let g:airline_theme='badwolf'
