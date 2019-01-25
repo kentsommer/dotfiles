@@ -6,6 +6,8 @@
 "" Contents:                ""
 ""   - vim-plug             ""
 ""   - ycmd                 ""
+""   - clang-format         ""
+""   - ultisnips            ""
 ""   - General              ""
 ""   - User interface       ""
 ""   - Colors and fonts     ""
@@ -71,6 +73,10 @@ Plug 'junegunn/fzf.vim'
 "" YouCompleteMe (code completion)
 Plug 'kentsommer/YouCompleteMe', {'do': 'python3 install.py --clangd-completer --ninja --clang-tidy' }
 
+"" ultisnips
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+
 "" Initialize plugin system
 call plug#end()
 
@@ -110,12 +116,48 @@ let g:ycm_complete_in_strings = 1
 "" make it so location list is populated for :lnext and :lprevious
 let g:ycm_always_populate_location_list = 1
 
+"" Make Ultisnips and ycmd play nicely together
+let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
+
 "" Use clangd instead of clang-complete
 let g:ycm_use_clangd = "Always"
 let g:ycm_clangd_binary_path = "~/.vim/plugged/YouCompleteMe/third_party/ycmd/third_party/clangd/output/bin/clangd"
 
 "" Mapping for best effort GoTo (will not work outside a translation unit)
 nnoremap <C-g> :YcmCompleter GoTo<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""
+"" clang-format ""
+""""""""""""""""""
+
+"" Set base style
+let g:clang_format#code_style = "google"
+
+"" Set extra style options
+let g:clang_format#style_options = {"ColumnLimit" : 120,
+                                  \ "DerivePointerAlignment" : "false",
+                                  \ "PointerAlignment" : "Left"}
+
+"" Manually select specific clang-format version
+let g:clang_format#command = "clang-format-6.0"
+
+"" Turn on clang-format on buffer write by default
+let g:clang_format#auto_format = 1
+
+"" Toggle clang-format formatting on buffer write
+nmap <Leader>C :ClangFormatAutoToggle<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""""""""""""""
+"" ultisnips ""
+"""""""""""""""
+
+"" Set python snippit style to Google
+let g:ultisnips_python_style = "google"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -227,8 +269,8 @@ set expandtab
 
 "" Enable smarttab (and settings)
 set smarttab
-set shiftwidth=4
-set tabstop=4
+set shiftwidth=2
+set tabstop=2
 
 "" Enable auto indenting
 filetype indent on
