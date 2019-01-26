@@ -6,6 +6,7 @@
 "" Contents:                ""
 ""   - vim-plug             ""
 ""   - ycmd                 ""
+""   - vim-lsc              ""
 ""   - clang-format         ""
 ""   - ultisnips            ""
 ""   - General              ""
@@ -77,6 +78,12 @@ Plug 'kentsommer/YouCompleteMe', {'do': 'python3 install.py --clangd-completer -
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
+"" vim-clang-format
+Plug 'rhysd/vim-clang-format'
+
+"" vim-lsc (language server client)
+Plug 'https://github.com/natebosch/vim-lsc.git'
+
 "" Initialize plugin system
 call plug#end()
 
@@ -126,6 +133,17 @@ let g:ycm_clangd_binary_path = "~/.vim/plugged/YouCompleteMe/third_party/ycmd/th
 
 "" Mapping for best effort GoTo (will not work outside a translation unit)
 nnoremap <C-g> :YcmCompleter GoTo<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""""""""""""
+"" vim-lsc ""
+"""""""""""""
+let g:lsc_server_commands = {
+  \ 'c': 'clangd',
+  \ 'cpp': 'clangd',
+  \ 'python' : 'pyls',
+  \ }
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
