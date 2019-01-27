@@ -5,10 +5,8 @@
 """"""""""""""""""""""""""""""
 "" Contents:                ""
 ""   - vim-plug             ""
-""   - ycmd                 ""
 ""   - vim-lsc              ""
 ""   - clang-format         ""
-""   - ultisnips            ""
 ""   - General              ""
 ""   - User interface       ""
 ""   - Colors and fonts     ""
@@ -71,79 +69,99 @@ Plug 'lervag/vimtex'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
-"" YouCompleteMe (code completion)
-Plug 'kentsommer/YouCompleteMe', {'do': 'python3 install.py --clangd-completer --ninja --clang-tidy' }
+"" async (normalize commands between neovim and vim)
+Plug 'prabirshrestha/async.vim'
 
-"" ultisnips
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
+"" asyncomplete (async completion engine)
+Plug 'prabirshrestha/asyncomplete.vim'
+
+"" asyncomplete-lsp (lsp support for asyncomplete)
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+
+"" vim-lsc (language server client)
+Plug 'prabirshrestha/vim-lsp'
 
 "" vim-clang-format
 Plug 'rhysd/vim-clang-format'
-
-"" vim-lsc (language server client)
-Plug 'https://github.com/natebosch/vim-lsc.git'
 
 "" Initialize plugin system
 call plug#end()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-""""""""""
-"" ycmd ""
-""""""""""
-
-"" Do not ask for confirmation when loading the ycm_extra_conf file
-let g:ycm_confirm_extra_conf = 0
-
-"" Show preview window when completing
-let g:ycm_add_preview_to_completeopt = 1
-
-"" Do not autoclose the preview window after completion
-let g:ycm_autoclose_preview_window_after_completion = 0
-
-"" Autoclose the preview window after insertion
-let g:ycm_autoclose_preview_window_after_insertion = 1
-
-"" Allow ycmd to look in comments and strings for completions
-let g:ycm_collect_identifiers_from_comments_and_strings = 1
-
-"" Use the utlisnips completer
-let g:ycm_use_ultisnips_completer = 1
-
-"" Completion for programming language's keyword
-let g:ycm_seed_identifiers_with_syntax = 1
-
-"" Completion in comments
-let g:ycm_complete_in_comments = 1
-
-"" Completion in string
-let g:ycm_complete_in_strings = 1
-
-"" make it so location list is populated for :lnext and :lprevious
-let g:ycm_always_populate_location_list = 1
-
-"" Make Ultisnips and ycmd play nicely together
-let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']
-let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
-
-"" Use clangd instead of clang-complete
-let g:ycm_use_clangd = "Always"
-let g:ycm_clangd_binary_path = "~/.vim/plugged/YouCompleteMe/third_party/ycmd/third_party/clangd/output/bin/clangd"
-
-"" Mapping for best effort GoTo (will not work outside a translation unit)
-nnoremap <C-g> :YcmCompleter GoTo<CR>
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 """""""""""""
 "" vim-lsc ""
 """""""""""""
-let g:lsc_server_commands = {
-  \ 'c': 'clangd',
-  \ 'cpp': 'clangd',
-  \ 'python' : 'pyls',
-  \ }
+
+"" Enable signs (warnings, info, etc)
+let g:lsp_signs_enabled = 1
+
+"" Set sign for errors
+let g:lsp_signs_error = {'text': '✗'}
+
+"" Set sign for warning
+let g:lsp_signs_warning = {'text': '⚠'}
+
+"" Set sign for hint/info
+let g:lsp_signs_hint = {'text': 'Ⓘ'}
+
+"" Show diagnostics under cursor in normal mode
+let g:lsp_diagnostics_echo_cursor = 1
+
+"" Use async completion
+let g:lsp_async_completion = 1
+
+"" Mapping for Rename
+nnoremap gR :LspRename<CR>
+
+"" Mapping for GoTo Definition
+nnoremap gd :LspDefinition<CR>
+
+"" Mapping for GoTo Declaration
+nnoremap gD :LspDeclaration<CR>
+
+"" Mapping for running a CodeAction
+nnoremap ga :LspCodeAction<CR>
+
+"" Mapping for Format
+nnoremap gf :LspDocumentFormat<CR>
+
+"" Mapping for visual selection Format
+vnoremap gf :LspDocumentRangeFormat<CR>
+
+"" Mapping for show Document Symbol
+nnoremap gS :LspDocumentSymbol<CR>
+
+"" Mapping for showing Implementation of Interface
+nnoremap gI :LspImplementation<CR>
+
+"" Mapping for Find References
+nnoremap gr :LspReferences<CR>
+
+"" Mapping for Type Definition
+nnoremap gT :LspTypeDefinition<CR>
+
+"" Mapping for search/show Workspace Symbol
+nnoremap gs :LspWorkspaceSymbol<CR>
+
+"" Setup clangd integration
+if executable('clangd')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'clangd',
+        \ 'cmd': {server_info->['clangd']},
+        \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
+        \ })
+endif
+
+"" Setup python integration
+if executable('pyls')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'pyls',
+        \ 'cmd': {server_info->['pyls']},
+        \ 'whitelist': ['python'],
+        \ 'workspace_config': {'pyls': {'plugins': {'pydocstyle': {'enabled': v:true}}}}
+        \ })
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -167,15 +185,6 @@ let g:clang_format#auto_format = 1
 
 "" Toggle clang-format formatting on buffer write
 nmap <Leader>C :ClangFormatAutoToggle<CR>
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-"""""""""""""""
-"" ultisnips ""
-"""""""""""""""
-
-"" Set python snippit style to Google
-let g:ultisnips_python_style = "google"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
