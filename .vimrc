@@ -96,6 +96,9 @@ call plug#end()
 "" Enable signs (warnings, info, etc)
 let g:lsp_signs_enabled = 1
 
+"" Enable diagnostics
+let g:lsp_diagnostics_enabled = 1
+
 "" Set sign for errors
 let g:lsp_signs_error = {'text': '✗'}
 
@@ -112,43 +115,43 @@ let g:lsp_diagnostics_echo_cursor = 1
 let g:lsp_async_completion = 1
 
 "" Mapping for Rename
-nnoremap gR :LspRename<CR>
+nnoremap mR :LspRename<CR>
 
 "" Mapping for GoTo Definition
-nnoremap gd :LspDefinition<CR>
+nnoremap md :LspDefinition<CR>
 
 "" Mapping for GoTo Declaration
-nnoremap gD :LspDeclaration<CR>
+nnoremap mD :LspDeclaration<CR>
 
 "" Mapping for running a CodeAction
-nnoremap ga :LspCodeAction<CR>
+nnoremap ma :LspCodeAction<CR>
 
 "" Mapping for Format
-nnoremap gf :LspDocumentFormat<CR>
+nnoremap mf :LspDocumentFormat<CR>
 
 "" Mapping for visual selection Format
-vnoremap gf :LspDocumentRangeFormat<CR>
+vnoremap mf :LspDocumentRangeFormat<CR>
 
 "" Mapping for show Document Symbol
-nnoremap gS :LspDocumentSymbol<CR>
+nnoremap mS :LspDocumentSymbol<CR>
 
 "" Mapping for showing Implementation of Interface
-nnoremap gI :LspImplementation<CR>
+nnoremap mI :LspImplementation<CR>
 
 "" Mapping for Find References
-nnoremap gr :LspReferences<CR>
+nnoremap mr :LspReferences<CR>
 
 "" Mapping for Type Definition
-nnoremap gT :LspTypeDefinition<CR>
+nnoremap mT :LspTypeDefinition<CR>
 
 "" Mapping for search/show Workspace Symbol
-nnoremap gs :LspWorkspaceSymbol<CR>
+nnoremap ms :LspWorkspaceSymbol<CR>
 
 "" Setup clangd integration
 if executable('clangd')
     au User lsp_setup call lsp#register_server({
         \ 'name': 'clangd',
-        \ 'cmd': {server_info->['clangd']},
+        \ 'cmd': {server_info->['clangd-9']},
         \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
         \ })
 endif
@@ -162,6 +165,17 @@ if executable('pyls')
         \ 'workspace_config': {'pyls': {'plugins': {'pydocstyle': {'enabled': v:true}}}}
         \ })
 endif
+
+"" Key binding setup
+imap <c-space> <Plug>(asyncomplete_force_refresh)
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
+autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
+
+"" Debug logging
+let g:lsp_log_verbose = 0
+let g:lsp_log_file = expand('~/vim-lsp.log')
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -178,7 +192,7 @@ let g:clang_format#style_options = {"ColumnLimit" : 120,
                                   \ "PointerAlignment" : "Left"}
 
 "" Manually select specific clang-format version
-let g:clang_format#command = "clang-format-6.0"
+let g:clang_format#command = "clang-format-9"
 
 "" Turn on clang-format on buffer write by default
 let g:clang_format#auto_format = 1
