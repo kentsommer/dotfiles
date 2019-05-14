@@ -6,7 +6,6 @@
 "" Contents:                ""
 ""   - vim-plug             ""
 ""   - vim-lsc              ""
-""   - clang-format         ""
 ""   - General              ""
 ""   - User interface       ""
 ""   - Colors and fonts     ""
@@ -72,23 +71,8 @@ Plug 'lervag/vimtex'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
-"" async (normalize commands between neovim and vim)
-Plug 'prabirshrestha/async.vim'
-
-"" asyncomplete (async completion engine)
-Plug 'prabirshrestha/asyncomplete.vim'
-
-"" asyncomplete-lsp (lsp support for asyncomplete)
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
-
 "" vim-lsc (language server client)
-Plug 'prabirshrestha/vim-lsp'
- 
-"" vim-clang-format
-Plug 'rhysd/vim-clang-format'
-
-"" vim-clang-format
-Plug 'rhysd/vim-clang-format'
+Plug 'natebosch/vim-lsc'
 
 "" Initialize plugin system
 call plug#end()
@@ -96,119 +80,37 @@ call plug#end()
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""
-"" vim-lsp ""
+"" vim-lsc ""
 """""""""""""
 
-"" Enable signs (warnings, info, etc)
-let g:lsp_signs_enabled = 1
+"" Avoid suppressing error messages
+set shortmess-=F
 
-"" Enable diagnostics
-let g:lsp_diagnostics_enabled = 1
+"" Set Clangd as language server for c++ files
+let g:lsc_server_commands = { 'cpp':'clangd'}
 
-"" Set sign for errors
-let g:lsp_signs_error = {'text': '✗'}
+"" Set keybindings for interacting with language servers
+let g:lsc_auto_map = {
+    \ 'GoToDefinition': 'md',
+    \ 'GoToDefinitionSplit': 'mD',
+    \ 'FindReferences': 'mr',
+    \ 'NextReference': '<C-n>',
+    \ 'PreviousReference': '<C-p>',
+    \ 'FindImplementations': 'mi',
+    \ 'FindCodeActions': 'ma',
+    \ 'Rename': 'mR',
+    \ 'ShowHover': v:true,
+    \ 'DocumentSymbol': 'mo',
+    \ 'WorkspaceSymbol': 'mS',
+    \ 'SignatureHelp': '<C-m>',
+    \ 'Completion': 'completefunc',
+    \}
 
-"" Set sign for warning
-let g:lsp_signs_warning = {'text': '⚠'}
+"" Auto close preview window
+autocmd CompleteDone * silent! pclose
 
-"" Set sign for hint/info
-let g:lsp_signs_hint = {'text': 'Ⓘ'}
-
-"" Show diagnostics under cursor in normal mode
-let g:lsp_diagnostics_echo_cursor = 1
-
-"" Use async completion
-let g:lsp_async_completion = 1
-
-"" Mapping for Rename
-nnoremap mR :LspRename<CR>
-
-"" Mapping for GoTo Definition
-nnoremap md :LspDefinition<CR>
-
-"" Mapping for GoTo Declaration
-nnoremap mD :LspDeclaration<CR>
-
-"" Mapping for running a CodeAction
-nnoremap ma :LspCodeAction<CR>
-
-"" Mapping for Format
-nnoremap mf :LspDocumentFormat<CR>
-
-"" Mapping for visual selection Format
-vnoremap mf :LspDocumentRangeFormat<CR>
-
-"" Mapping for show Document Symbol
-nnoremap mS :LspDocumentSymbol<CR>
-
-"" Mapping for showing Implementation of Interface
-nnoremap mI :LspImplementation<CR>
-
-"" Mapping for Find References
-nnoremap mr :LspReferences<CR>
-
-"" Mapping for Type Definition
-nnoremap mT :LspTypeDefinition<CR>
-
-"" Mapping for search/show Workspace Symbol
-nnoremap ms :LspWorkspaceSymbol<CR>
-
-"" Show preview while typing
-let asyncomplete_auto_completeopt = 0
-set completeopt=menuone,noinsert,noselect,preview
-
-"" Setup clangd integration
-if executable('clangd')
-   au User lsp_setup call lsp#register_server({
-       \ 'name': 'clangd',
-       \ 'cmd': {server_info->['/home/kentsommer/Software/source_installs/llvm-project/build/bin/clangd']},
-       \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
-       \ })
-endif
-
-"" Setup python integration
-" if executable('pyls')
-"    au User lsp_setup call lsp#register_server({
-"        \ 'name': 'pyls',
-"        \ 'cmd': {server_info->['pyls']},
-"        \ 'whitelist': ['python'],
-"        \ 'workspace_config': {'pyls': {'plugins': {'pydocstyle': {'enabled': v:true}}}}
-"        \ })
-" endif
-
-"" Key binding setup
-imap <c-space> <Plug>(asyncomplete_force_refresh)
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-inoremap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
-autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
-
-"" Debug logging
-let g:lsp_log_verbose = 0
-let g:lsp_log_file = expand('~/vim-lsp.log')
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-""""""""""""""""""
-"" clang-format ""
-""""""""""""""""""
-
-"" Set base style
-let g:clang_format#code_style = "google"
-
-"" Set extra style options
-let g:clang_format#style_options = {"ColumnLimit" : 120,
-                                  \ "DerivePointerAlignment" : "false",
-                                  \ "PointerAlignment" : "Left"}
-
-"" Manually select specific clang-format version
-let g:clang_format#command = "clang-format-6.0"
-
-"" Turn on clang-format on buffer write by default
-let g:clang_format#auto_format = 1
-
-"" Toggle clang-format formatting on buffer write
-nmap <Leader>C :ClangFormatAutoToggle<CR>
+"" Set trace level
+let g:lsc_trace_level = 'off'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -366,6 +268,9 @@ map <C-B> :call yapf#YAPF()<cr>
 
 "" Toggle for NerdTree
 map <C-N> :NERDTreeToggle<CR>
+
+"" Make ESC exit terminal mode
+tnoremap <Esc> <C-\><C-n>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
