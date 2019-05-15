@@ -93,7 +93,7 @@ set shortmess-=F
 "" Set Clangd as language server for c++ files
 let g:lsc_server_commands = {
     \ 'cpp': {
-    \     'command': '/home/kentsommer/Software/source_installs/llvm-project/build/bin/clangd -clang-tidy',
+    \     'command': 'clangd',
     \     'suppress_stderr': v:true,
     \     }
     \ }
@@ -137,7 +137,7 @@ let g:clang_format#style_options = {"ColumnLimit" : 120,
                                   \ "PointerAlignment" : "Left"}
 
  "" Manually select specific clang-format version
-let g:clang_format#command = "/home/kentsommer/Software/source_installs/llvm-project/build/bin/clang-format"
+let g:clang_format#command = "clang-format"
 
  "" Turn on clang-format on buffer write by default
 let g:clang_format#auto_format = 1
