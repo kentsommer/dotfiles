@@ -6,6 +6,7 @@
 "" Contents:                ""
 ""   - vim-plug             ""
 ""   - vim-lsc              ""
+""   - vim-clang-format     ""
 ""   - General              ""
 ""   - User interface       ""
 ""   - Colors and fonts     ""
@@ -74,6 +75,9 @@ Plug 'junegunn/fzf.vim'
 "" vim-lsc (language server client)
 Plug 'natebosch/vim-lsc'
 
+"" vim-clang-format
+Plug 'rhysd/vim-clang-format'
+
 "" Initialize plugin system
 call plug#end()
 
@@ -87,7 +91,13 @@ call plug#end()
 set shortmess-=F
 
 "" Set Clangd as language server for c++ files
-let g:lsc_server_commands = { 'cpp':'clangd'}
+let g:lsc_server_commands = {
+    \ 'cpp': {
+    \     'command': '/home/kentsommer/Software/source_installs/llvm-project/build/bin/clangd -clang-tidy',
+    \     'suppress_stderr': v:true,
+    \     }
+    \ }
+
 
 "" Set keybindings for interacting with language servers
 let g:lsc_auto_map = {
@@ -111,6 +121,29 @@ autocmd CompleteDone * silent! pclose
 
 "" Set trace level
 let g:lsc_trace_level = 'off'
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+ """""""""""""""""""""
+"" vim-clang-format ""
+""""""""""""""""""""""
+
+ "" Set base style
+let g:clang_format#code_style = "google"
+
+ "" Set extra style options
+let g:clang_format#style_options = {"ColumnLimit" : 120,
+                                  \ "DerivePointerAlignment" : "false",
+                                  \ "PointerAlignment" : "Left"}
+
+ "" Manually select specific clang-format version
+let g:clang_format#command = "/home/kentsommer/Software/source_installs/llvm-project/build/bin/clang-format"
+
+ "" Turn on clang-format on buffer write by default
+let g:clang_format#auto_format = 1
+
+ "" Toggle clang-format formatting on buffer write
+nmap mf :ClangFormatAutoToggle<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
