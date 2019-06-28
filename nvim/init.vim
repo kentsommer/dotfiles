@@ -95,9 +95,12 @@ let g:lsc_server_commands = {
     \ 'cpp': {
     \     'command': 'clangd',
     \     'suppress_stderr': v:true,
-    \     }
+    \     },
+    \ 'python': {
+    \     'command': 'pyls',
+    \     'suppress_stderr': v:true,
+    \     },
     \ }
-
 
 "" Set keybindings for interacting with language servers
 let g:lsc_auto_map = {
@@ -112,7 +115,7 @@ let g:lsc_auto_map = {
     \ 'ShowHover': v:true,
     \ 'DocumentSymbol': 'mo',
     \ 'WorkspaceSymbol': 'mS',
-    \ 'SignatureHelp': '<C-m>',
+    \ 'SignatureHelp': 'ms',
     \ 'Completion': 'completefunc',
     \}
 
@@ -120,7 +123,7 @@ let g:lsc_auto_map = {
 autocmd CompleteDone * silent! pclose
 
 "" Set trace level
-let g:lsc_trace_level = 'off'
+let g:lsc_trace_level = 'verbose'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -137,7 +140,7 @@ let g:clang_format#style_options = {"ColumnLimit" : 120,
                                   \ "PointerAlignment" : "Left"}
 
  "" Manually select specific clang-format version
-let g:clang_format#command = "clang-format"
+let g:clang_format#command = "clang-format-4.0"
 
  "" Turn on clang-format on buffer write by default
 let g:clang_format#auto_format = 1
