@@ -5,7 +5,7 @@
 """"""""""""""""""""""""""""""
 "" Contents:                ""
 ""   - vim-plug             ""
-""   - vim-lsc              ""
+""   - lsp                  ""
 ""   - vim-clang-format     ""
 ""   - General              ""
 ""   - User interface       ""
@@ -72,62 +72,44 @@ Plug 'lervag/vimtex'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
-"" vim-lsc (language server client)
-Plug 'natebosch/vim-lsc'
-
 "" vim-clang-format
 Plug 'rhysd/vim-clang-format'
+
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 "" Initialize plugin system
 call plug#end()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-"""""""""""""
-"" vim-lsc ""
-"""""""""""""
+"""""""""
+"" lsp ""
+"""""""""
 
-"" Avoid suppressing error messages
-set shortmess-=F
+"" Highlight symbol under cursor on CursorHold
+autocmd CursorMoved * silent call CocActionAsync('highlight')
 
-"" Set Clangd as language server for c++ files
-let g:lsc_server_commands = {
-    \ 'cpp': {
-    \     'command': 'clangd',
-    \     'suppress_stderr': v:true,
-    \     },
-    \ 'python': {
-    \     'command': 'pyls',
-    \     'suppress_stderr': v:true,
-    \     },
-    \ }
+"" Mapping for running a CodeAction
+nmap <silent> ma <Plug>(coc-codeaction-selected)<CR>
 
-"" Set keybindings for interacting with language servers
-let g:lsc_auto_map = {
-    \ 'GoToDefinition': 'md',
-    \ 'GoToDefinitionSplit': 'mD',
-    \ 'FindReferences': 'mr',
-    \ 'NextReference': '<C-n>',
-    \ 'PreviousReference': '<C-p>',
-    \ 'FindImplementations': 'mi',
-    \ 'FindCodeActions': 'ma',
-    \ 'Rename': 'mR',
-    \ 'ShowHover': v:true,
-    \ 'DocumentSymbol': 'mo',
-    \ 'WorkspaceSymbol': 'mS',
-    \ 'SignatureHelp': 'ms',
-    \ 'Completion': 'completefunc',
-    \}
+"" Mapping for GoTo Definition/Declaration
+nmap <silent> md <Plug>(coc-definition)
 
-"" Auto close preview window
-autocmd CompleteDone * silent! pclose
+"" Mapping for Find References
+nmap <silent> mr <Plug>(coc-references)<CR>
 
-"" Set trace level
-let g:lsc_trace_level = 'verbose'
+"" Mapping for Rename
+nmap <silent> mR <Plug>(coc-rename)
+
+"" Mapping for showing Implementation of Interface
+nmap <silent> mi <Plug>(coc-implementation)
+
+"" Mapping for Type Definition
+nmap <silent> mt <Plug>(coc-type-definition)
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
- """""""""""""""""""""
+""""""""""""""""""""""
 "" vim-clang-format ""
 """"""""""""""""""""""
 
@@ -214,6 +196,9 @@ nmap <C-l><C-l> :set invnumber<CR>
 
 "" Add space to listchars
 set listchars+=space:•
+
+"" Always show signcolumns
+set signcolumn=yes
 
 "" Toggle list
 noremap <F5> :set list!<CR>
