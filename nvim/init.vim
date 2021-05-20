@@ -6,6 +6,7 @@
 "" Contents:                ""
 ""   - vim-plug             ""
 ""   - lsp                  ""
+""   - fzf                  ""
 ""   - vim-clang-format     ""
 ""   - General              ""
 ""   - User interface       ""
@@ -25,11 +26,19 @@
 "" vim-plug ""
 """"""""""""""
 
-"" Auto install
+"" Auto install vim-plug
 if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
     silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
         \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     autocmd VimEnter * PlugInstall --sync | :so $MYVIMRC | :q
+endif
+
+if !executable("yarn")
+  silent !curl -o- -L https://yarnpkg.com/install.sh | bash
+endif
+
+if !executable("nodejs")
+  silent !curl -sL install-node.now.sh/lts | bash
 endif
 
 "" Set plugin directory
@@ -37,9 +46,6 @@ call plug#begin()
 
 "" vim-solarized8 (color theme)
 Plug 'lifepillar/vim-solarized8'
-
-"" yapf (Google's Python Code formatter)
-Plug 'google/yapf', { 'rtp': 'plugins/vim', 'for': 'python' }
 
 "" vim-airline (better status bar)
 Plug 'vim-airline/vim-airline'
@@ -59,14 +65,8 @@ Plug 'tpope/vim-repeat'
 "" vim-commentary (Comment stuff out...)
 Plug 'tpope/vim-commentary'
 
-"" vim-gitgutter (git integration)
-Plug 'airblade/vim-gitgutter'
-
 "" nerdtree (tree explorer)
 Plug 'scrooloose/nerdtree'
-
-"" vimtex (modern latex plugin)
-Plug 'lervag/vimtex'
 
 "" fzf (fuzzy finder)
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -75,7 +75,8 @@ Plug 'junegunn/fzf.vim'
 "" vim-clang-format
 Plug 'rhysd/vim-clang-format'
 
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+"" coc (lsp)
+Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
 
 "" Initialize plugin system
 call plug#end()
@@ -95,17 +96,35 @@ nmap <silent> ma <Plug>(coc-codeaction-selected)<CR>
 "" Mapping for GoTo Definition/Declaration
 nmap <silent> md <Plug>(coc-definition)
 
-"" Mapping for Find References
-nmap <silent> mr <Plug>(coc-references)<CR>
-
 "" Mapping for Rename
-nmap <silent> mR <Plug>(coc-rename)
-
-"" Mapping for showing Implementation of Interface
-nmap <silent> mi <Plug>(coc-implementation)
+nmap <silent> mr <Plug>(coc-rename)
 
 "" Mapping for Type Definition
 nmap <silent> mt <Plug>(coc-type-definition)
+
+"" Mapping for code folding
+nmap <silent> mc <Plug>(coc-action-fold)
+
+"" Mapping for Hover
+nmap <silent> mh :call CocAction('doHover')<CR>
+
+"" Mapping for Switch Header/Source
+nmap <silent><nowait> ms :CocCommand clangd.switchSourceHeader<CR>
+
+"" Mapping for Symbolinfo
+nmap <silent><nowait> mi :CocCommand clangd.symbolInfo<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""""""""
+"" fzf ""
+"""""""""
+
+"" Remap ESC for fzf so that it exits the search pane when pressed.
+autocmd FileType fzf tnoremap <buffer> <Esc> <Esc>
+
+"" Mapping for file search pane.
+nmap <silent> mo :GFiles<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -121,8 +140,9 @@ let g:clang_format#style_options = {"ColumnLimit" : 120,
                                   \ "DerivePointerAlignment" : "false",
                                   \ "PointerAlignment" : "Left"}
 
- "" Manually select specific clang-format version
-let g:clang_format#command = "clang-format-4.0"
+"" Manually select specific clang-format version
+" let g:clang_format#command = "/opt/tri/llvm/9.0.1/bin/clang-format"
+let g:clang_format#command = "/home/kentsommer/source_installs/system/llvm-project/build/bin/clang-format"
 
  "" Turn on clang-format on buffer write by default
 let g:clang_format#auto_format = 1
@@ -144,6 +164,9 @@ set autoread
 
 "" Set the mapleader. If "mapleader" is not set or empty, a backslash is used instead.
 let mapleader = ","
+
+"" Mapping to open vertical split fish terminal
+nmap <silent> me :vsp term://fish<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -316,3 +339,33 @@ fun! CleanExtraSpaces()
     call setpos('.', save_cursor)
     call setreg('/', old_query)
 endfun
+
+function! s:gotobuild() abort
+    let l:file_path=@%
+    let l:file_name=split(l:file_path, '/')[-1]
+    let l:file_directory=trim(system('dirname ' . l:file_path))
+    let l:worktree=trim(system("git -C " . l:file_directory . " rev-parse --show-toplevel"))
+    if l:worktree =~ "fatal: not a git repository"
+      echo "Doing nothing, not in a git repository"
+      return
+    endif
+    " Use ripgrep if available else grep.
+    if executable('rg')
+      let l:command="rg --multiline 'srcs = \\[(?s).*" . l:file_name . "\"' --glob 'BUILD' --vimgrep " . l:worktree . " |tail -1"
+    else
+      let l:command="grep -r '\"" . l:file_name . "\"' " . l:worktree . " -n --include 'BUILD'"
+    endif
+    echo l:command
+    let l:result=trim(system(l:command))
+    if l:result == ""
+      echo 'No corresponding BUILD file found'
+    else
+      let l:result_list=split(l:result, ':')
+      let l:build_file_name=l:result_list[0]
+      let l:build_file_line=l:result_list[1]
+      execute 'edit +' . l:build_file_line l:build_file_name
+      execute 'normal! zz'
+    endif
+endfunction
+command! -complete=command GOTOBuild call <SID>gotobuild()
+nnoremap <silent> mB :GOTOBuild<CR>
